@@ -17,6 +17,35 @@ fn body_style() -> (&'static str, Style) {
     (body_id, body_style)
 }
 
+fn about_me() -> Table {
+    // Add table.
+    // Left cell with a picture of CV person
+    // Right cell with a text box containing the CV information
+
+    let cell : Vec<TableCell> = vec![
+        TableCell::new()
+            .add_paragraph(
+                Paragraph::new()
+                    .add_run(Run::new().add_text("Picture of CV person"))
+            ),
+            TableCell::new()
+            .add_paragraph(
+                Paragraph::new()
+                    .add_run(Run::new().add_text("CV Information"))
+            )
+    ];
+
+    let table_rows : Vec<TableRow> = vec![TableRow::new(cell)];
+
+    Table::new(table_rows)
+        .set_grid(vec![1, 1])
+        .indent(0)
+        .align(TableAlignmentType::Center)
+        .style("TableStyle")
+        .layout(TableLayoutType::Fixed)
+
+}
+
 pub fn hello() -> Result<(), DocxError> {
     let path = std::path::Path::new("./hello.docx");
 
@@ -27,6 +56,7 @@ pub fn hello() -> Result<(), DocxError> {
     Docx::new()
         .add_style(heading1)
         .add_style(body_style)
+        .add_table(about_me())
         .add_paragraph(
             Paragraph::new()
                 .style(&heading1_id)
