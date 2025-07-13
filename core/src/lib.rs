@@ -43,18 +43,13 @@ pub fn hello() -> Result<(), DocxError> {
     Ok(())
 }
 
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        let _ = hello();
-        assert_eq!(result, 4);
+        let result = hello();
+        assert!(result.is_ok(), "Failed to create hello.docx");
     }
 }
