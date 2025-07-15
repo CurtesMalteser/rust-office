@@ -20,9 +20,7 @@ fn body_style() -> (&'static str, Style) {
 }
 
 fn about_me() -> Table {
-    // Add table.
-    // Left cell with a picture of CV person
-    // Right cell with a text box containing the CV information
+    // Get data for the Pic
     let mut img = File::open("../images/bot.png").unwrap();
     let mut buf = Vec::new();
     let _ = img.read_to_end(&mut buf).unwrap();
@@ -65,6 +63,7 @@ pub fn hello() -> Result<(), DocxError> {
     let file = std::fs::File::create(path).unwrap();
     Docx::new()
         .add_table(about_me())
+        .add_paragraph(Paragraph::new().line_spacing(LineSpacing::new().before(200).after(200)))
         .add_style(heading1)
         .add_style(body_style)
         .add_paragraph(
