@@ -4,7 +4,7 @@ use std::path::Path;
 use docx_rs::*;
 
 mod model;
-use model::{CV, Experience};
+use model::{CV, ToDocx};
 
 fn about_me(image_path: impl AsRef<Path>, about: impl Into<String>) -> Table {
     // Get data for the Pic
@@ -43,53 +43,13 @@ fn about_me(image_path: impl AsRef<Path>, about: impl Into<String>) -> Table {
 
 }
 
-fn add_postion(exp: &Experience) -> Paragraph {
-    Paragraph::new()
-        .add_run(Run::new()
-            .add_text(format!("{} - {}", exp.position, exp.company))
-            .bold()
-            .size(24))
-}
-
-fn add_date(exp: &Experience) -> Paragraph {
-    Paragraph::new()
-        .add_run(Run::new()
-            .add_text(format!("{} – {}", exp.start_date, exp.end_date))
-            .italic()
-            .size(20)
-            .color("7F7F7F"))
-}
-
-fn add_achivement(achievement: &str) -> Paragraph {
-    Paragraph::new()
-        .add_run(Run::new()
-            .add_text(format!("• {}", achievement)))
-}
-
-// Got experience text from: https://enhancv.com/uk/cv-examples/software-developer/#re-resume-preview
-fn experience_section(experiences: Vec<Experience>) -> Vec<Paragraph> {
-    experiences.into_iter().flat_map(|exp| {
-  
-        let mut paragraphs = vec![
-            add_postion(&exp),
-            add_date(&exp),
-        ];
-
-        // Add achievements
-        paragraphs.extend(exp.achievements.into_iter().map(|achievement| add_achivement(&achievement)));
-        paragraphs.push(Paragraph::new()); // Add a blank line after each experience
-
-        paragraphs
-    }).collect()
-}
-
 
 pub fn generate_docx(cv: CV) -> Result<(), DocxError> {
     let path = std::path::Path::new("./hello.docx");
     
     let file = std::fs::File::create(path).unwrap();
 
-    let paragraphs = experience_section(cv.experiences);
+    let paragraphs = cv.experiences.to_docx();
 
     let cv_docx = Docx::new()
         .add_table(about_me(cv.image_path, cv.about))
@@ -105,6 +65,8 @@ pub fn generate_docx(cv: CV) -> Result<(), DocxError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    use crate::model::Experience;
 
     #[test]
     fn it_works() {
